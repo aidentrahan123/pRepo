@@ -35,6 +35,7 @@ def gather_facts():
     return {
         "long_date": today.strftime("%A, %B %d, %Y"),
         "day_of_year": today.timetuple().tm_yday,
+        "lucky_number": random.randint(1, 99),
         "number_fact": random.choice(NUMBER_FACTS),
     }
 
@@ -47,6 +48,7 @@ def render_text(data):
         "=" * 50,
         f"Today's date : {data['long_date']}",
         f"Day of year  : {data['day_of_year']}",
+        f"Lucky number : {data['lucky_number']}",
         f"Number fact  : {data['number_fact']}",
         "=" * 50,
     ]
@@ -57,6 +59,7 @@ def render_html(data):
     """Build a styled, self-contained HTML page string."""
     long_date = html.escape(data["long_date"])
     day_of_year = html.escape(str(data["day_of_year"]))
+    lucky_number = html.escape(str(data["lucky_number"]))
     number_fact = html.escape(data["number_fact"])
 
     return f"""<!DOCTYPE html>
@@ -127,6 +130,10 @@ def render_html(data):
     <div class="row">
       <span class="label">Day of year</span>
       <span class="value">{day_of_year}</span>
+    </div>
+    <div class="row">
+      <span class="label">Lucky number</span>
+      <span class="value">{lucky_number}</span>
     </div>
     <div class="row">
       <span class="label">Number fact</span>

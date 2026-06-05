@@ -31,10 +31,20 @@ class TestQuickNumbers(unittest.TestCase):
 
     def test_gather_facts_shape(self):
         data = quick_numbers.gather_facts()
-        self.assertEqual(set(data), {"long_date", "day_of_year", "number_fact"})
+        self.assertEqual(
+            set(data),
+            {"long_date", "day_of_year", "lucky_number", "number_fact"},
+        )
         self.assertIn(data["number_fact"], quick_numbers.NUMBER_FACTS)
         self.assertGreaterEqual(data["day_of_year"], 1)
         self.assertLessEqual(data["day_of_year"], 366)
+
+    def test_lucky_number_in_valid_range(self):
+        # Sample many times; the lucky number must always be 1..99.
+        for _ in range(100):
+            lucky = quick_numbers.gather_facts()["lucky_number"]
+            self.assertGreaterEqual(lucky, 1)
+            self.assertLessEqual(lucky, 99)
 
     def test_day_of_year_in_valid_range(self):
         day_of_year = date.today().timetuple().tm_yday
@@ -47,6 +57,7 @@ class TestQuickNumbers(unittest.TestCase):
         self.assertIn("QUICK NUMBERS", output)
         self.assertIn("Today's date", output)
         self.assertIn("Day of year", output)
+        self.assertIn("Lucky number", output)
         self.assertIn("Number fact", output)
         self.assertIn(data["number_fact"], output)
 
@@ -60,7 +71,8 @@ class TestQuickNumbers(unittest.TestCase):
         self.assertIn(str(data["day_of_year"]), page)
 
     def test_render_html_escapes_special_characters(self):
-        data = {"long_date": "X & Y", "day_of_year": 1, "number_fact": "<script>"}
+        data = {"long_date": "X & Y", "day_of_year": 1, "lucky_number": 7,
+                "number_fact": "<script>"}
         page = quick_numbers.render_html(data)
         self.assertNotIn("<script>", page)
         self.assertIn("&lt;script&gt;", page)
